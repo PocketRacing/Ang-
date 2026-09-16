@@ -1,0 +1,4028 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<meta name="theme-color" content="#0b1020">
+<title>English Simulator — REMAKE 1.0</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --bg:#080b14;
+    --panel:#101522;
+    --panel2:#151b2b;
+    --panel3:#1b2336;
+    --border:#29344e;
+    --text:#f4f7ff;
+    --muted:#8f9bb5;
+    --blue:#5b8cff;
+    --cyan:#38d9ff;
+    --green:#45df9a;
+    --yellow:#ffd166;
+    --red:#ff5f6d;
+    --purple:#a879ff;
+    --orange:#ff9f43;
+    --radius:18px;
+}
+
+html,body{
+    width:100%;
+    min-height:100%;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    overflow-x:hidden;
+}
+
+button,input{
+    font:inherit;
+}
+
+button{
+    border:0;
+    cursor:pointer;
+}
+
+.app{
+    min-height:100vh;
+    display:flex;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    width:250px;
+    min-height:100vh;
+    background:#0c111e;
+    border-right:1px solid var(--border);
+    padding:20px 14px;
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    z-index:50;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:8px 10px 22px;
+}
+
+.logoIcon{
+    width:44px;
+    height:44px;
+    border-radius:14px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,var(--blue),var(--purple));
+    font-size:23px;
+    box-shadow:0 8px 30px #5b8cff33;
+}
+
+.logoText strong{
+    display:block;
+    font-size:17px;
+}
+
+.logoText span{
+    color:var(--muted);
+    font-size:11px;
+}
+
+.nav{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+}
+
+.nav button{
+    width:100%;
+    text-align:left;
+    color:#aeb8cf;
+    background:transparent;
+    padding:12px 13px;
+    border-radius:12px;
+    transition:.2s;
+}
+
+.nav button:hover{
+    background:#171e2f;
+    color:white;
+}
+
+.nav button.active{
+    background:#1b2a4b;
+    color:white;
+}
+
+.navIcon{
+    display:inline-block;
+    width:27px;
+}
+
+.sidebarBottom{
+    position:absolute;
+    bottom:18px;
+    left:14px;
+    right:14px;
+}
+
+.musicBtn{
+    width:100%;
+    background:#151c2c;
+    color:#c8d0e2;
+    border:1px solid var(--border);
+    padding:11px;
+    border-radius:12px;
+}
+
+/* MAIN */
+
+.main{
+    margin-left:250px;
+    width:calc(100% - 250px);
+    min-height:100vh;
+}
+
+.topbar{
+    height:75px;
+    border-bottom:1px solid var(--border);
+    background:#0a0f1aee;
+    backdrop-filter:blur(15px);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 25px;
+    position:sticky;
+    top:0;
+    z-index:40;
+}
+
+.pageTitle{
+    font-size:21px;
+    font-weight:700;
+}
+
+.stats{
+    display:flex;
+    gap:9px;
+    align-items:center;
+}
+
+.stat{
+    background:#121827;
+    border:1px solid var(--border);
+    padding:8px 12px;
+    border-radius:11px;
+    font-size:13px;
+    white-space:nowrap;
+}
+
+.stat b{
+    color:white;
+}
+
+.xpTop{
+    color:var(--blue);
+}
+
+.coinsTop{
+    color:var(--yellow);
+}
+
+.livesTop{
+    color:#ff6974;
+}
+
+.content{
+    padding:25px;
+    max-width:1500px;
+    margin:auto;
+}
+
+/* MOBILE */
+
+.mobileNav{
+    display:none;
+}
+
+/* PAGES */
+
+.page{
+    display:none;
+    animation:fade .25s ease;
+}
+
+.page.active{
+    display:block;
+}
+
+@keyframes fade{
+    from{opacity:0;transform:translateY(5px)}
+    to{opacity:1;transform:none}
+}
+
+/* CARDS */
+
+.grid{
+    display:grid;
+    gap:16px;
+}
+
+.grid2{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
+.grid3{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+}
+
+.grid4{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+}
+
+.card{
+    background:linear-gradient(145deg,#111827,#0e1421);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px;
+    box-shadow:0 10px 40px #00000018;
+}
+
+.card h2{
+    font-size:19px;
+    margin-bottom:8px;
+}
+
+.card h3{
+    font-size:16px;
+    margin-bottom:6px;
+}
+
+.muted{
+    color:var(--muted);
+}
+
+.small{
+    font-size:12px;
+}
+
+/* HOME */
+
+.hero{
+    min-height:250px;
+    border-radius:25px;
+    padding:35px;
+    background:
+        radial-gradient(circle at 80% 20%,#5b8cff35,transparent 35%),
+        radial-gradient(circle at 20% 100%,#a879ff20,transparent 40%),
+        linear-gradient(135deg,#121c34,#0d1320);
+    border:1px solid var(--border);
+    position:relative;
+    overflow:hidden;
+}
+
+.hero h1{
+    font-size:38px;
+    max-width:650px;
+    margin-bottom:12px;
+}
+
+.hero p{
+    color:#aeb9d0;
+    max-width:650px;
+    line-height:1.6;
+}
+
+.heroButtons{
+    display:flex;
+    gap:10px;
+    margin-top:24px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    background:var(--blue);
+    color:white;
+    padding:12px 18px;
+    border-radius:12px;
+    transition:.2s;
+    font-weight:700;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+    filter:brightness(1.1);
+}
+
+.btn.secondary{
+    background:#1a2336;
+    border:1px solid var(--border);
+}
+
+.btn.green{
+    background:#178d65;
+}
+
+.btn.red{
+    background:#a93443;
+}
+
+.btn.yellow{
+    background:#a97812;
+}
+
+.btn.purple{
+    background:#6841ad;
+}
+
+.progress{
+    width:100%;
+    height:9px;
+    background:#20293c;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress div{
+    height:100%;
+    background:linear-gradient(90deg,var(--blue),var(--cyan));
+    border-radius:20px;
+    transition:.4s;
+}
+
+.bigStat{
+    font-size:30px;
+    font-weight:800;
+    margin:8px 0;
+}
+
+/* MAP */
+
+.map{
+    min-height:620px;
+    border-radius:25px;
+    border:1px solid var(--border);
+    background:
+        radial-gradient(circle at 20% 30%,#254b4930,transparent 25%),
+        radial-gradient(circle at 80% 70%,#45316b30,transparent 25%),
+        linear-gradient(145deg,#101b27,#101624);
+    position:relative;
+    overflow:hidden;
+}
+
+.map::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    opacity:.13;
+    background-image:
+        linear-gradient(#fff 1px,transparent 1px),
+        linear-gradient(90deg,#fff 1px,transparent 1px);
+    background-size:45px 45px;
+}
+
+.location{
+    position:absolute;
+    width:150px;
+    min-height:100px;
+    background:#111a29ee;
+    border:1px solid #32405e;
+    border-radius:18px;
+    padding:14px;
+    text-align:center;
+    z-index:2;
+    transition:.2s;
+    box-shadow:0 10px 35px #0005;
+}
+
+.location:hover{
+    transform:translateY(-5px) scale(1.02);
+    border-color:var(--blue);
+}
+
+.location.locked{
+    filter:grayscale(1);
+    opacity:.45;
+}
+
+.location .locIcon{
+    font-size:32px;
+}
+
+.location strong{
+    display:block;
+    margin-top:5px;
+}
+
+.location span{
+    font-size:11px;
+    color:var(--muted);
+}
+
+.locHome{left:7%;top:10%}
+.locShop{left:40%;top:7%}
+.locCafe{left:72%;top:13%}
+.locCity{left:15%;top:40%}
+.locWork{left:43%;top:37%}
+.locAirport{left:74%;top:42%}
+.locHotel{left:30%;top:67%}
+.locLondon{left:62%;top:72%}
+
+/* LESSONS */
+
+.lesson{
+    background:#111827;
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:18px;
+    display:flex;
+    gap:15px;
+    align-items:center;
+    transition:.2s;
+}
+
+.lesson:hover{
+    border-color:#526b9f;
+    transform:translateY(-2px);
+}
+
+.lessonIcon{
+    width:55px;
+    height:55px;
+    border-radius:16px;
+    display:grid;
+    place-items:center;
+    background:#1b2945;
+    font-size:27px;
+    flex-shrink:0;
+}
+
+.lessonInfo{
+    flex:1;
+}
+
+.lessonInfo h3{
+    margin-bottom:5px;
+}
+
+.lessonInfo p{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.lessonStatus{
+    color:var(--green);
+    font-size:12px;
+}
+
+/* WORD */
+
+.wordCard{
+    max-width:750px;
+    margin:30px auto;
+    text-align:center;
+}
+
+.englishWord{
+    font-size:52px;
+    font-weight:800;
+    letter-spacing:-2px;
+    margin:30px 0 8px;
+}
+
+.pron{
+    color:var(--cyan);
+    font-size:16px;
+}
+
+.speakBtn{
+    margin-top:15px;
+    background:#18243b;
+    color:white;
+    border:1px solid #344667;
+    padding:9px 15px;
+    border-radius:10px;
+}
+
+.answers{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:25px;
+}
+
+.answer{
+    background:#151d2e;
+    color:white;
+    border:1px solid var(--border);
+    border-radius:13px;
+    padding:15px;
+    transition:.2s;
+}
+
+.answer:hover{
+    border-color:var(--blue);
+    background:#1b2944;
+}
+
+.answer.correct{
+    background:#123e31;
+    border-color:var(--green);
+}
+
+.answer.wrong{
+    background:#451c25;
+    border-color:var(--red);
+}
+
+.feedback{
+    margin-top:20px;
+    padding:16px;
+    border-radius:14px;
+    display:none;
+}
+
+.feedback.show{
+    display:block;
+}
+
+.feedback.good{
+    background:#11392d;
+    color:#6ff0b6;
+}
+
+.feedback.bad{
+    background:#421c25;
+    color:#ff8b96;
+}
+
+/* DIALOG */
+
+.dialogue{
+    max-width:800px;
+    margin:auto;
+}
+
+.chat{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin:25px 0;
+}
+
+.bubble{
+    max-width:75%;
+    padding:13px 16px;
+    border-radius:17px;
+    line-height:1.5;
+}
+
+.npc{
+    background:#1a2335;
+    align-self:flex-start;
+}
+
+.player{
+    background:#274582;
+    align-self:flex-end;
+}
+
+.dialogOptions{
+    display:grid;
+    gap:10px;
+}
+
+/* VOCAB */
+
+.search{
+    width:100%;
+    background:#111827;
+    border:1px solid var(--border);
+    color:white;
+    border-radius:13px;
+    padding:13px 15px;
+    outline:none;
+    margin-bottom:15px;
+}
+
+.wordRow{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    padding:13px 0;
+    border-bottom:1px solid #20293b;
+}
+
+.wordRow:last-child{
+    border-bottom:0;
+}
+
+.wordEn{
+    font-weight:700;
+}
+
+.wordRu{
+    color:var(--muted);
+    font-size:13px;
+}
+
+/* QUEST */
+
+.quest{
+    padding:17px;
+    border-radius:16px;
+    background:#111827;
+    border:1px solid var(--border);
+}
+
+.questTop{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.questReward{
+    color:var(--yellow);
+}
+
+/* ACHIEVEMENTS */
+
+.achievement{
+    min-height:140px;
+    background:#111827;
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:18px;
+}
+
+.achievement.locked{
+    opacity:.42;
+    filter:grayscale(1);
+}
+
+.achievementIcon{
+    font-size:34px;
+    margin-bottom:12px;
+}
+
+/* MINI GAMES */
+
+.gameCenter{
+    max-width:850px;
+    margin:auto;
+}
+
+.miniQuestion{
+    font-size:25px;
+    text-align:center;
+    margin:30px 0;
+}
+
+.typeInput{
+    width:100%;
+    padding:16px;
+    border-radius:14px;
+    background:#0c1220;
+    border:1px solid var(--border);
+    color:white;
+    text-align:center;
+    font-size:20px;
+    outline:none;
+}
+
+.choiceGrid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.timer{
+    font-size:28px;
+    text-align:center;
+    color:var(--yellow);
+    font-weight:bold;
+}
+
+/* PROFILE */
+
+.avatar{
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    font-size:48px;
+    background:linear-gradient(135deg,#294b8f,#643c9b);
+    margin-bottom:15px;
+}
+
+/* TOAST */
+
+.toast{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    z-index:100;
+    background:#161f31;
+    border:1px solid var(--border);
+    padding:14px 18px;
+    border-radius:14px;
+    box-shadow:0 10px 35px #0007;
+    transform:translateY(100px);
+    opacity:0;
+    transition:.3s;
+}
+
+.toast.show{
+    transform:none;
+    opacity:1;
+}
+
+/* SETTINGS */
+
+.setting{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px 0;
+    border-bottom:1px solid #20283a;
+}
+
+.switch{
+    width:50px;
+    height:27px;
+    background:#293247;
+    border-radius:30px;
+    position:relative;
+    cursor:pointer;
+}
+
+.switch::after{
+    content:"";
+    width:21px;
+    height:21px;
+    position:absolute;
+    top:3px;
+    left:4px;
+    border-radius:50%;
+    background:white;
+    transition:.2s;
+}
+
+.switch.on{
+    background:var(--blue);
+}
+
+.switch.on::after{
+    left:25px;
+}
+
+/* EXAM */
+
+.examOption{
+    width:100%;
+    text-align:left;
+    background:#151d2d;
+    color:white;
+    padding:15px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    margin:6px 0;
+}
+
+.examOption:hover{
+    border-color:var(--blue);
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+    .sidebar{
+        display:none;
+    }
+
+    .main{
+        margin-left:0;
+        width:100%;
+        padding-bottom:70px;
+    }
+
+    .topbar{
+        padding:0 14px;
+        height:65px;
+    }
+
+    .content{
+        padding:15px;
+    }
+
+    .stats{
+        gap:4px;
+    }
+
+    .stat{
+        padding:6px 8px;
+        font-size:11px;
+    }
+
+    .hero{
+        padding:25px 20px;
+    }
+
+    .hero h1{
+        font-size:30px;
+    }
+
+    .grid2,.grid3,.grid4{
+        grid-template-columns:1fr;
+    }
+
+    .mobileNav{
+        display:flex;
+        position:fixed;
+        bottom:0;
+        left:0;
+        right:0;
+        height:65px;
+        background:#0c111eee;
+        border-top:1px solid var(--border);
+        z-index:60;
+        justify-content:space-around;
+        backdrop-filter:blur(15px);
+    }
+
+    .mobileNav button{
+        flex:1;
+        color:#8994ac;
+        background:transparent;
+        font-size:10px;
+    }
+
+    .mobileNav button.active{
+        color:white;
+    }
+
+    .mobileNav span{
+        display:block;
+        font-size:20px;
+        margin-bottom:3px;
+    }
+
+    .englishWord{
+        font-size:40px;
+    }
+
+    .answers{
+        grid-template-columns:1fr;
+    }
+
+    .map{
+        min-height:850px;
+    }
+
+    .location{
+        width:125px;
+    }
+
+    .locHome{left:4%;top:4%}
+    .locShop{left:50%;top:4%}
+    .locCafe{left:24%;top:20%}
+    .locCity{left:58%;top:26%}
+    .locWork{left:5%;top:43%}
+    .locAirport{left:52%;top:45%}
+    .locHotel{left:25%;top:62%}
+    .locLondon{left:53%;top:77%}
+}
+
+/* tiny */
+@media(max-width:500px){
+    .pageTitle{
+        font-size:16px;
+    }
+
+    .stats .stat:nth-child(1){
+        display:none;
+    }
+
+    .hero h1{
+        font-size:25px;
+    }
+
+    .choiceGrid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<aside class="sidebar">
+
+    <div class="logo">
+        <div class="logoIcon">🇬🇧</div>
+        <div class="logoText">
+            <strong>English Simulator</strong>
+            <span>REMAKE 1.0</span>
+        </div>
+    </div>
+
+    <div class="nav">
+        <button class="active" onclick="showPage('home',this)">🏠 <span class="navIcon"></span>Главная</button>
+        <button onclick="showPage('map',this)">🗺️ <span class="navIcon"></span>Карта</button>
+        <button onclick="showPage('lessons',this)">📚 <span class="navIcon"></span>Уроки</button>
+        <button onclick="showPage('practice',this)">🎮 <span class="navIcon"></span>Практика</button>
+        <button onclick="showPage('dialogues',this)">💬 <span class="navIcon"></span>Диалоги</button>
+        <button onclick="showPage('vocab',this)">📖 <span class="navIcon"></span>Словарь</button>
+        <button onclick="showPage('quests',this)">🎯 <span class="navIcon"></span>Задания</button>
+        <button onclick="showPage('achievements',this)">🏆 <span class="navIcon"></span>Достижения</button>
+        <button onclick="showPage('stats',this)">📊 <span class="navIcon"></span>Статистика</button>
+        <button onclick="showPage('settings',this)">⚙️ <span class="navIcon"></span>Настройки</button>
+    </div>
+
+    <div class="sidebarBottom">
+        <button class="musicBtn" onclick="toggleMusic()" id="musicButton">🎵 Музыка: ВКЛ</button>
+    </div>
+
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+    <div class="pageTitle" id="pageTitle">Главная</div>
+
+    <div class="stats">
+        <div class="stat xpTop">⭐ XP <b id="topXP">0</b></div>
+        <div class="stat coinsTop">🪙 <b id="topCoins">0</b></div>
+        <div class="stat livesTop">❤️ <b id="topLives">3</b></div>
+        <div class="stat">🔥 <b id="topStreak">0</b></div>
+    </div>
+</header>
+
+<div class="content">
+
+<!-- HOME -->
+
+<section class="page active" id="page-home">
+
+    <div class="hero">
+        <h1>English Simulator 🇬🇧</h1>
+        <p>
+            Начни с самого нуля и постепенно научись понимать английский,
+            говорить, читать, слушать и строить свои первые предложения.
+        </p>
+
+        <div class="heroButtons">
+            <button class="btn" onclick="showPage('lessons')">📚 Начать урок</button>
+            <button class="btn secondary" onclick="showPage('map')">🗺️ Открыть карту</button>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="grid grid4">
+
+        <div class="card">
+            <div class="muted">Текущий уровень</div>
+            <div class="bigStat" id="homeLevel">A0</div>
+            <div class="progress"><div id="levelProgress"></div></div>
+            <p class="small muted" id="levelText">0 / 100 XP</p>
+        </div>
+
+        <div class="card">
+            <div class="muted">Выучено слов</div>
+            <div class="bigStat" id="homeWords">0</div>
+            <p class="small muted">из большой базы</p>
+        </div>
+
+        <div class="card">
+            <div class="muted">Серия</div>
+            <div class="bigStat">🔥 <span id="homeStreak">0</span></div>
+            <p class="small muted">дней подряд</p>
+        </div>
+
+        <div class="card">
+            <div class="muted">Правильных ответов</div>
+            <div class="bigStat" id="homeCorrect">0</div>
+            <p class="small muted">продолжай!</p>
+        </div>
+
+    </div>
+
+    <br>
+
+    <div class="grid grid2">
+
+        <div class="card">
+            <h2>🚀 Следующий шаг</h2>
+            <p class="muted" id="nextLessonText">Первый урок: Hello!</p>
+            <br>
+            <button class="btn" onclick="startNextLesson()">Продолжить обучение</button>
+        </div>
+
+        <div class="card">
+            <h2>🎯 Сегодня</h2>
+            <p class="muted">Выполни задания и получи дополнительные монеты.</p>
+            <br>
+            <button class="btn secondary" onclick="showPage('quests')">Открыть задания</button>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- MAP -->
+
+<section class="page" id="page-map">
+
+    <div class="card">
+        <h2>🗺️ Мир English Simulator</h2>
+        <p class="muted">
+            Путешествуй по карте, открывай новые места и используй английский
+            в разных жизненных ситуациях.
+        </p>
+    </div>
+
+    <br>
+
+    <div class="map">
+
+        <button class="location locHome" onclick="locationAction('home')">
+            <div class="locIcon">🏠</div>
+            <strong>Дом</strong>
+            <span>Everyday English</span>
+        </button>
+
+        <button class="location locShop" onclick="locationAction('shop')">
+            <div class="locIcon">🛒</div>
+            <strong>Магазин</strong>
+            <span>Shopping</span>
+        </button>
+
+        <button class="location locCafe" onclick="locationAction('cafe')">
+            <div class="locIcon">☕</div>
+            <strong>Кафе</strong>
+            <span>Food & Drinks</span>
+        </button>
+
+        <button class="location locCity" onclick="locationAction('city')">
+            <div class="locIcon">🌆</div>
+            <strong>Город</strong>
+            <span>City English</span>
+        </button>
+
+        <button class="location locWork" onclick="locationAction('work')">
+            <div class="locIcon">💼</div>
+            <strong>Работа</strong>
+            <span>Work English</span>
+        </button>
+
+        <button class="location locAirport" onclick="locationAction('airport')">
+            <div class="locIcon">✈️</div>
+            <strong>Аэропорт</strong>
+            <span>Travel</span>
+        </button>
+
+        <button class="location locHotel" onclick="locationAction('hotel')">
+            <div class="locIcon">🏨</div>
+            <strong>Отель</strong>
+            <span>Travel & Booking</span>
+        </button>
+
+        <button class="location locLondon" onclick="locationAction('london')">
+            <div class="locIcon">🇬🇧</div>
+            <strong>London</strong>
+            <span>Advanced English</span>
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- LESSONS -->
+
+<section class="page" id="page-lessons">
+
+    <div class="card">
+        <h2>📚 Академия английского</h2>
+        <p class="muted">
+            Проходи уроки последовательно. Каждый урок открывает новые слова,
+            фразы и механики.
+        </p>
+    </div>
+
+    <br>
+
+    <div class="grid grid2" id="lessonsList"></div>
+
+</section>
+
+
+<!-- LESSON GAME -->
+
+<section class="page" id="page-lessonGame">
+
+    <div class="card">
+        <div style="display:flex;justify-content:space-between;gap:10px">
+            <span id="lessonGameTitle">Урок</span>
+            <span id="lessonCounter">1 / 10</span>
+        </div>
+
+        <br>
+
+        <div class="progress">
+            <div id="lessonProgress"></div>
+        </div>
+    </div>
+
+    <div class="wordCard card">
+
+        <div class="muted" id="questionType">Перевод слова</div>
+
+        <div class="englishWord" id="questionWord">Hello</div>
+
+        <div class="pron" id="questionPron">/həˈləʊ/</div>
+
+        <button class="speakBtn" onclick="speakCurrent()">🔊 Произнести</button>
+
+        <div class="answers" id="lessonAnswers"></div>
+
+        <div class="feedback" id="lessonFeedback"></div>
+
+    </div>
+
+</section>
+
+
+<!-- PRACTICE -->
+
+<section class="page" id="page-practice">
+
+    <div class="card">
+        <h2>🎮 Практика</h2>
+        <p class="muted">
+            Здесь можно тренировать слова без прохождения уроков.
+        </p>
+    </div>
+
+    <br>
+
+    <div class="grid grid3">
+
+        <div class="card">
+            <h2>🧠 Быстрый тест</h2>
+            <p class="muted">Выбери правильный перевод.</p>
+            <br>
+            <button class="btn" onclick="startPractice('choice')">Играть</button>
+        </div>
+
+        <div class="card">
+            <h2>⌨️ Напиши слово</h2>
+            <p class="muted">Вспомни английское слово самостоятельно.</p>
+            <br>
+            <button class="btn purple" onclick="startPractice('type')">Играть</button>
+        </div>
+
+        <div class="card">
+            <h2>⚡ Скорость</h2>
+            <p class="muted">Сколько правильных ответов ты успеешь сделать?</p>
+            <br>
+            <button class="btn yellow" onclick="startPractice('speed')">Играть</button>
+        </div>
+
+    </div>
+
+    <br>
+
+    <div id="practiceGame"></div>
+
+</section>
+
+
+<!-- DIALOGUES -->
+
+<section class="page" id="page-dialogues">
+
+    <div class="dialogue">
+
+        <div class="card">
+            <h2>💬 Первый разговор</h2>
+            <p class="muted">
+                Познакомься с персонажем и попробуй пройти диалог на английском.
+            </p>
+        </div>
+
+        <div class="chat" id="dialogueChat"></div>
+
+        <div class="dialogOptions" id="dialogOptions"></div>
+
+    </div>
+
+</section>
+
+
+<!-- VOCAB -->
+
+<section class="page" id="page-vocab">
+
+    <div class="card">
+        <h2>📖 Большой словарь</h2>
+        <p class="muted">
+            Все изучаемые слова. Используй поиск.
+        </p>
+        <br>
+        <input
+            class="search"
+            id="vocabSearch"
+            placeholder="Поиск: English или русский..."
+            oninput="renderVocab()"
+        >
+        <div id="vocabList"></div>
+    </div>
+
+</section>
+
+
+<!-- QUESTS -->
+
+<section class="page" id="page-quests">
+
+    <div class="card">
+        <h2>🎯 Задания</h2>
+        <p class="muted">Выполняй задания и получай награды.</p>
+    </div>
+
+    <br>
+
+    <div class="grid grid2" id="questsList"></div>
+
+</section>
+
+
+<!-- ACHIEVEMENTS -->
+
+<section class="page" id="page-achievements">
+
+    <div class="card">
+        <h2>🏆 Достижения</h2>
+        <p class="muted">Здесь собраны твои достижения.</p>
+    </div>
+
+    <br>
+
+    <div class="grid grid3" id="achievementsList"></div>
+
+</section>
+
+
+<!-- STATS -->
+
+<section class="page" id="page-stats">
+
+    <div class="grid grid3">
+
+        <div class="card">
+            <div class="muted">Всего XP</div>
+            <div class="bigStat" id="statXP">0</div>
+        </div>
+
+        <div class="card">
+            <div class="muted">Монеты</div>
+            <div class="bigStat" id="statCoins">0</div>
+        </div>
+
+        <div class="card">
+            <div class="muted">Уроков</div>
+            <div class="bigStat" id="statLessons">0</div>
+        </div>
+
+        <div class="card">
+            <div class="muted">Ответов</div>
+            <div class="bigStat" id="statAnswers">0</div>
+        </div>
+
+        <div class="card">
+            <div class="muted">Правильно</div>
+            <div class="bigStat" id="statCorrect">0</div>
+        </div>
+
+        <div class="card">
+            <div class="muted">Лучшее комбо</div>
+            <div class="bigStat" id="statBest">0</div>
+        </div>
+
+    </div>
+
+    <br>
+
+    <div class="card">
+        <h2>📈 Твой прогресс</h2>
+        <br>
+        <p class="muted">Точность</p>
+        <br>
+        <div class="progress">
+            <div id="accuracyBar"></div>
+        </div>
+        <br>
+        <strong id="accuracyText">0%</strong>
+    </div>
+
+</section>
+
+
+<!-- SETTINGS -->
+
+<section class="page" id="page-settings">
+
+    <div class="card">
+
+        <h2>⚙️ Настройки</h2>
+
+        <div class="setting">
+            <div>
+                <strong>🎵 Музыка</strong>
+                <div class="small muted">Фоновая музыка через Web Audio</div>
+            </div>
+            <div class="switch on" id="musicSwitch" onclick="toggleMusic()"></div>
+        </div>
+
+        <div class="setting">
+            <div>
+                <strong>🔊 Озвучка</strong>
+                <div class="small muted">Произношение английских слов</div>
+            </div>
+            <div class="switch on" id="soundSwitch" onclick="toggleSound()"></div>
+        </div>
+
+        <br>
+
+        <button class="btn red" onclick="resetGame()">🗑️ Сбросить весь прогресс</button>
+
+    </div>
+
+</section>
+
+
+<!-- EXAM -->
+
+<section class="page" id="page-exam">
+
+    <div class="gameCenter">
+
+        <div class="card">
+            <h2>📝 Экзамен A1</h2>
+            <p class="muted">Проверь свои знания.</p>
+        </div>
+
+        <br>
+
+        <div class="card" id="examGame"></div>
+
+    </div>
+
+</section>
+
+</div>
+</main>
+
+</div>
+
+
+<div class="mobileNav">
+
+    <button class="active" onclick="showPage('home',this)">
+        <span>🏠</span>Главная
+    </button>
+
+    <button onclick="showPage('map',this)">
+        <span>🗺️</span>Карта
+    </button>
+
+    <button onclick="showPage('lessons',this)">
+        <span>📚</span>Уроки
+    </button>
+
+    <button onclick="showPage('practice',this)">
+        <span>🎮</span>Играть
+    </button>
+
+    <button onclick="showPage('vocab',this)">
+        <span>📖</span>Слова
+    </button>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+
+/* =========================================================
+   ENGLISH SIMULATOR REMAKE 1.0
+   ONE FILE
+========================================================= */
+
+
+/* =========================================================
+   WORD DATABASE
+========================================================= */
+
+const WORDS = [
+
+/* A0 */
+
+{en:"HELLO",ru:"привет",say:"хэлоу",cat:"A0"},
+{en:"HI",ru:"привет",say:"хай",cat:"A0"},
+{en:"GOODBYE",ru:"до свидания",say:"гудбай",cat:"A0"},
+{en:"BYE",ru:"пока",say:"бай",cat:"A0"},
+{en:"YES",ru:"да",say:"йес",cat:"A0"},
+{en:"NO",ru:"нет",say:"ноу",cat:"A0"},
+{en:"PLEASE",ru:"пожалуйста",say:"плиз",cat:"A0"},
+{en:"THANK YOU",ru:"спасибо",say:"сэнк ю",cat:"A0"},
+{en:"SORRY",ru:"извини / простите",say:"сори",cat:"A0"},
+{en:"WELCOME",ru:"добро пожаловать",say:"вэлкам",cat:"A0"},
+{en:"I",ru:"я",say:"ай",cat:"A0"},
+{en:"YOU",ru:"ты / вы",say:"ю",cat:"A0"},
+{en:"HE",ru:"он",say:"хи",cat:"A0"},
+{en:"SHE",ru:"она",say:"ши",cat:"A0"},
+{en:"WE",ru:"мы",say:"ви",cat:"A0"},
+{en:"THEY",ru:"они",say:"зэй",cat:"A0"},
+{en:"NAME",ru:"имя",say:"нейм",cat:"A0"},
+{en:"MY",ru:"мой / моя",say:"май",cat:"A0"},
+{en:"YOUR",ru:"твой / ваш",say:"йор",cat:"A0"},
+{en:"FRIEND",ru:"друг",say:"фрэнд",cat:"A0"},
+{en:"FAMILY",ru:"семья",say:"фэмили",cat:"A0"},
+{en:"MOTHER",ru:"мама",say:"мазэр",cat:"A0"},
+{en:"FATHER",ru:"папа",say:"фазэр",cat:"A0"},
+{en:"BROTHER",ru:"брат",say:"бразэр",cat:"A0"},
+{en:"SISTER",ru:"сестра",say:"систэр",cat:"A0"},
+{en:"HOUSE",ru:"дом",say:"хаус",cat:"A0"},
+{en:"HOME",ru:"дом / жилище",say:"хоум",cat:"A0"},
+{en:"ROOM",ru:"комната",say:"рум",cat:"A0"},
+{en:"WATER",ru:"вода",say:"уотэр",cat:"A0"},
+{en:"FOOD",ru:"еда",say:"фуд",cat:"A0"},
+{en:"BOOK",ru:"книга",say:"бук",cat:"A0"},
+{en:"PHONE",ru:"телефон",say:"фоун",cat:"A0"},
+{en:"CAR",ru:"машина",say:"кар",cat:"A0"},
+{en:"CITY",ru:"город",say:"сити",cat:"A0"},
+{en:"DAY",ru:"день",say:"дэй",cat:"A0"},
+{en:"NIGHT",ru:"ночь",say:"найт",cat:"A0"},
+{en:"TODAY",ru:"сегодня",say:"тудэй",cat:"A0"},
+{en:"TOMORROW",ru:"завтра",say:"тумороу",cat:"A0"},
+{en:"YESTERDAY",ru:"вчера",say:"йестэрдэй",cat:"A0"},
+{en:"GOOD",ru:"хороший",say:"гуд",cat:"A0"},
+{en:"BAD",ru:"плохой",say:"бэд",cat:"A0"},
+{en:"BIG",ru:"большой",say:"биг",cat:"A0"},
+{en:"SMALL",ru:"маленький",say:"смол",cat:"A0"},
+{en:"NEW",ru:"новый",say:"нью",cat:"A0"},
+{en:"OLD",ru:"старый",say:"оулд",cat:"A0"},
+{en:"HOT",ru:"горячий",say:"хот",cat:"A0"},
+{en:"COLD",ru:"холодный",say:"коулд",cat:"A0"},
+
+/* EVERYDAY */
+
+{en:"WAKE UP",ru:"просыпаться",say:"уэйк ап",cat:"Everyday"},
+{en:"GET UP",ru:"вставать",say:"гет ап",cat:"Everyday"},
+{en:"LIE",ru:"лежать",say:"лай",cat:"Everyday"},
+{en:"SHOWER",ru:"душ",say:"шауэр",cat:"Everyday"},
+{en:"DAIRY",ru:"молочный / молочные продукты",say:"дэри",cat:"Food"},
+{en:"THE SAME",ru:"тот же / одинаковый",say:"зэ сейм",cat:"Everyday"},
+{en:"AT THE SAME TIME",ru:"одновременно / в то же время",say:"эт зэ сейм тайм",cat:"Everyday"},
+{en:"THIS KIND OF",ru:"такого рода / такого типа",say:"зис кайнд ов",cat:"Everyday"},
+{en:"EVERYONE",ru:"все / каждый",say:"эвриуан",cat:"Everyday"},
+{en:"NOWADAYS",ru:"в наши дни",say:"науэдэйз",cat:"Everyday"},
+
+/* COMMUNICATION */
+
+{en:"IT SEEMS TO ME",ru:"мне кажется",say:"ит симз ту ми",cat:"Communication"},
+{en:"HAPPEN TO",ru:"случаться с / довестись",say:"хэпэн ту",cat:"Communication"},
+{en:"LAUGH AT",ru:"смеяться над",say:"лаф эт",cat:"Communication"},
+{en:"TO REFUSE",ru:"отказываться",say:"ту рифьюз",cat:"Communication"},
+{en:"SHOULD",ru:"следует / стоит / должен",say:"шуд",cat:"Communication"},
+{en:"COULD",ru:"мог бы / могли бы",say:"куд",cat:"Communication"},
+{en:"SPEAKING",ru:"говорение / разговорная речь",say:"спикинг",cat:"Communication"},
+{en:"TALK ON THE PHONE",ru:"разговаривать по телефону",say:"ток он зэ фоун",cat:"Communication"},
+{en:"FLUENTLY",ru:"свободно / бегло",say:"флуэнтли",cat:"Communication"},
+{en:"GUESS",ru:"угадывать / предполагать",say:"гэс",cat:"Communication"},
+{en:"SIGH",ru:"вздох",say:"сай",cat:"Communication"},
+{en:"TO SIGN",ru:"подписывать",say:"ту сайн",cat:"Communication"},
+{en:"TEACH",ru:"преподавать / учить",say:"тич",cat:"Communication"},
+
+/* TRAVEL */
+
+{en:"TO RENT",ru:"арендовать / снимать",say:"ту рент",cat:"Travel"},
+{en:"APPLICATION",ru:"приложение / заявление",say:"эпликэйшн",cat:"Travel"},
+{en:"LANDMARK",ru:"ориентир / достопримечательность",say:"лэндмарк",cat:"Travel"},
+{en:"LANDMARKS",ru:"достопримечательности / ориентиры",say:"лэндмаркс",cat:"Travel"},
+{en:"TO BOOK",ru:"бронировать",say:"ту бук",cat:"Travel"},
+{en:"GET TO THE AIRPORT",ru:"добираться до аэропорта",say:"гет ту зи эйрпорт",cat:"Travel"},
+{en:"AIRPORT",ru:"аэропорт",say:"эйрпорт",cat:"Travel"},
+{en:"HOTEL",ru:"отель",say:"хоутэл",cat:"Travel"},
+{en:"TICKET",ru:"билет",say:"тикит",cat:"Travel"},
+{en:"FLIGHT",ru:"рейс / полёт",say:"флайт",cat:"Travel"},
+{en:"TRAIN",ru:"поезд",say:"трэйн",cat:"Travel"},
+{en:"STATION",ru:"станция / вокзал",say:"стэйшн",cat:"Travel"},
+{en:"PASSPORT",ru:"паспорт",say:"паспорт",cat:"Travel"},
+{en:"LUGGAGE",ru:"багаж",say:"лагидж",cat:"Travel"},
+{en:"TRIP",ru:"поездка",say:"трип",cat:"Travel"},
+{en:"JOURNEY",ru:"путешествие / поездка",say:"джёрни",cat:"Travel"},
+
+/* WORK */
+
+{en:"NECESSARY",ru:"необходимый / необходимо",say:"нэсэсэри",cat:"Work"},
+{en:"IMMEDIATELY",ru:"немедленно / сразу",say:"имидиэтли",cat:"Work"},
+{en:"PLEASURE",ru:"удовольствие",say:"плэжэр",cat:"Work"},
+{en:"TO DEPEND",ru:"зависеть",say:"ту дипэнд",cat:"Work"},
+{en:"TO SOLVE",ru:"решать",say:"ту солв",cat:"Work"},
+{en:"SUCCESSFUL",ru:"успешный",say:"сэксэсфул",cat:"Work"},
+{en:"TO PASS",ru:"сдавать / проходить",say:"ту пас",cat:"Work"},
+{en:"URGENT",ru:"срочный",say:"ёрджэнт",cat:"Work"},
+{en:"URGENTLY",ru:"срочно",say:"ёрджэнтли",cat:"Work"},
+{en:"FREEDOM",ru:"свобода",say:"фридэм",cat:"Advanced"},
+{en:"INDEPENDENCE",ru:"независимость",say:"индэпэндэнс",cat:"Advanced"},
+{en:"EXCITING",ru:"увлекательный / захватывающий",say:"иксайтинг",cat:"Advanced"},
+{en:"ITEM",ru:"предмет / элемент / товар",say:"айтэм",cat:"Work"},
+{en:"READING",ru:"чтение",say:"ридинг",cat:"Study"},
+{en:"LISTENING",ru:"аудирование / восприятие на слух",say:"лисэннинг",cat:"Study"},
+{en:"OBVIOUS",ru:"очевидный / очевидно",say:"обиэс",cat:"Advanced"},
+
+/* PEOPLE */
+
+{en:"MAN",ru:"мужчина",say:"мэн",cat:"People"},
+{en:"WOMAN",ru:"женщина",say:"вумэн",cat:"People"},
+{en:"BOY",ru:"мальчик",say:"бой",cat:"People"},
+{en:"GIRL",ru:"девочка / девушка",say:"гёрл",cat:"People"},
+{en:"PERSON",ru:"человек",say:"пёрсэн",cat:"People"},
+{en:"PEOPLE",ru:"люди",say:"пипл",cat:"People"},
+{en:"CHILD",ru:"ребёнок",say:"чайлд",cat:"People"},
+{en:"TEACHER",ru:"учитель",say:"тичэр",cat:"People"},
+{en:"STUDENT",ru:"студент / ученик",say:"стьюдэнт",cat:"People"},
+{en:"DOCTOR",ru:"врач",say:"доктэр",cat:"People"},
+{en:"NURSE",ru:"медсестра / медбрат",say:"нёрс",cat:"People"},
+{en:"DRIVER",ru:"водитель",say:"драйвэр",cat:"People"},
+{en:"WORKER",ru:"работник",say:"уоркэр",cat:"People"},
+
+/* FOOD */
+
+{en:"BREAD",ru:"хлеб",say:"брэд",cat:"Food"},
+{en:"MILK",ru:"молоко",say:"милк",cat:"Food"},
+{en:"CHEESE",ru:"сыр",say:"чиз",cat:"Food"},
+{en:"MEAT",ru:"мясо",say:"мит",cat:"Food"},
+{en:"CHICKEN",ru:"курица",say:"чикэн",cat:"Food"},
+{en:"FISH",ru:"рыба",say:"фиш",cat:"Food"},
+{en:"APPLE",ru:"яблоко",say:"эпл",cat:"Food"},
+{en:"ORANGE",ru:"апельсин",say:"ориндж",cat:"Food"},
+{en:"COFFEE",ru:"кофе",say:"кофи",cat:"Food"},
+{en:"TEA",ru:"чай",say:"ти",cat:"Food"},
+{en:"BREAKFAST",ru:"завтрак",say:"брэкфэст",cat:"Food"},
+{en:"LUNCH",ru:"обед",say:"ланч",cat:"Food"},
+{en:"DINNER",ru:"ужин",say:"динэр",cat:"Food"},
+
+/* WEATHER */
+
+{en:"RAIN",ru:"дождь",say:"рэйн",cat:"Weather"},
+{en:"SUN",ru:"солнце",say:"сан",cat:"Weather"},
+{en:"SNOW",ru:"снег",say:"сноу",cat:"Weather"},
+{en:"WIND",ru:"ветер",say:"уинд",cat:"Weather"},
+{en:"CLOUD",ru:"облако",say:"клауд",cat:"Weather"},
+{en:"STORM",ru:"буря / шторм",say:"сторм",cat:"Weather"},
+{en:"SUNNY",ru:"солнечный",say:"сани",cat:"Weather"},
+{en:"RAINY",ru:"дождливый",say:"рэни",cat:"Weather"},
+{en:"CLOUDY",ru:"облачный",say:"клауди",cat:"Weather"},
+{en:"COLD WEATHER",ru:"холодная погода",say:"коулд уэзэр",cat:"Weather"},
+
+/* VERBS */
+
+{en:"BE",ru:"быть",say:"би",cat:"Verbs"},
+{en:"HAVE",ru:"иметь",say:"хэв",cat:"Verbs"},
+{en:"DO",ru:"делать",say:"ду",cat:"Verbs"},
+{en:"GO",ru:"идти / ехать",say:"гоу",cat:"Verbs"},
+{en:"COME",ru:"приходить",say:"кам",cat:"Verbs"},
+{en:"SEE",ru:"видеть",say:"си",cat:"Verbs"},
+{en:"LOOK",ru:"смотреть",say:"лук",cat:"Verbs"},
+{en:"KNOW",ru:"знать",say:"ноу",cat:"Verbs"},
+{en:"THINK",ru:"думать",say:"синк",cat:"Verbs"},
+{en:"WANT",ru:"хотеть",say:"уонт",cat:"Verbs"},
+{en:"NEED",ru:"нуждаться / нуждаться в",say:"нид",cat:"Verbs"},
+{en:"LIKE",ru:"нравиться",say:"лайк",cat:"Verbs"},
+{en:"LOVE",ru:"любить",say:"лав",cat:"Verbs"},
+{en:"MAKE",ru:"делать / создавать",say:"мейк",cat:"Verbs"},
+{en:"TAKE",ru:"брать",say:"тэйк",cat:"Verbs"},
+{en:"GIVE",ru:"давать",say:"гив",cat:"Verbs"},
+{en:"GET",ru:"получать / добираться",say:"гет",cat:"Verbs"},
+{en:"COME BACK",ru:"возвращаться",say:"кам бэк",cat:"Verbs"},
+{en:"WORK",ru:"работать",say:"уорк",cat:"Verbs"},
+{en:"LIVE",ru:"жить",say:"лив",cat:"Verbs"},
+{en:"STUDY",ru:"учиться",say:"стади",cat:"Verbs"},
+{en:"LEARN",ru:"учить / изучать",say:"лёрн",cat:"Verbs"},
+{en:"READ",ru:"читать",say:"рид",cat:"Verbs"},
+{en:"WRITE",ru:"писать",say:"райт",cat:"Verbs"},
+{en:"LISTEN",ru:"слушать",say:"лисэн",cat:"Verbs"},
+{en:"SPEAK",ru:"говорить",say:"спик",cat:"Verbs"},
+{en:"TALK",ru:"разговаривать",say:"ток",cat:"Verbs"},
+{en:"ASK",ru:"спрашивать",say:"аск",cat:"Verbs"},
+{en:"ANSWER",ru:"отвечать",say:"ансэр",cat:"Verbs"},
+{en:"HELP",ru:"помогать",say:"хелп",cat:"Verbs"},
+{en:"WAIT",ru:"ждать",say:"уэйт",cat:"Verbs"},
+{en:"START",ru:"начинать",say:"старт",cat:"Verbs"},
+{en:"FINISH",ru:"заканчивать",say:"финиш",cat:"Verbs"},
+{en:"OPEN",ru:"открывать",say:"оупэн",cat:"Verbs"},
+{en:"CLOSE",ru:"закрывать",say:"клоуз",cat:"Verbs"},
+{en:"BUY",ru:"покупать",say:"бай",cat:"Verbs"},
+{en:"SELL",ru:"продавать",say:"сел",cat:"Verbs"},
+{en:"PAY",ru:"платить",say:"пэй",cat:"Verbs"},
+{en:"USE",ru:"использовать",say:"юз",cat:"Verbs"},
+{en:"TRY",ru:"пытаться",say:"трай",cat:"Verbs"},
+{en:"REMEMBER",ru:"помнить",say:"римэмбэр",cat:"Verbs"},
+{en:"FORGET",ru:"забывать",say:"форгет",cat:"Verbs"},
+{en:"UNDERSTAND",ru:"понимать",say:"андэрстэнд",cat:"Verbs"},
+{en:"FEEL",ru:"чувствовать",say:"фил",cat:"Verbs"},
+{en:"FIND",ru:"находить",say:"файнд",cat:"Verbs"},
+{en:"KEEP",ru:"держать / сохранять",say:"кип",cat:"Verbs"},
+{en:"CALL",ru:"звонить",say:"кол",cat:"Verbs"},
+{en:"MOVE",ru:"двигаться / переезжать",say:"мув",cat:"Verbs"},
+{en:"PLAY",ru:"играть",say:"плэй",cat:"Verbs"},
+
+/* ADJECTIVES */
+
+{en:"HOSPITABLE",ru:"гостеприимный",say:"хоспитэбл",cat:"Advanced"},
+{en:"HAPPY",ru:"счастливый",say:"хэпи",cat:"Adjectives"},
+{en:"SAD",ru:"грустный",say:"сэд",cat:"Adjectives"},
+{en:"TIRED",ru:"уставший",say:"тайэрд",cat:"Adjectives"},
+{en:"BUSY",ru:"занятый",say:"бизи",cat:"Adjectives"},
+{en:"FREE",ru:"свободный",say:"фри",cat:"Adjectives"},
+{en:"EASY",ru:"лёгкий",say:"изи",cat:"Adjectives"},
+{en:"DIFFICULT",ru:"сложный",say:"дификалт",cat:"Adjectives"},
+{en:"IMPORTANT",ru:"важный",say:"импортэнт",cat:"Adjectives"},
+{en:"INTERESTING",ru:"интересный",say:"интрэстинг",cat:"Adjectives"},
+{en:"BORING",ru:"скучный",say:"боринг",cat:"Adjectives"},
+{en:"BEAUTIFUL",ru:"красивый",say:"бьютифул",cat:"Adjectives"},
+{en:"DIFFERENT",ru:"разный",say:"дифрэнт",cat:"Adjectives"},
+{en:"READY",ru:"готовый",say:"рэди",cat:"Adjectives"},
+{en:"SAFE",ru:"безопасный",say:"сэйф",cat:"Adjectives"},
+{en:"DANGEROUS",ru:"опасный",say:"дэйнджэрэс",cat:"Adjectives"},
+{en:"SUCCESSFUL",ru:"успешный",say:"сэксэсфул",cat:"Adjectives"},
+
+/* TIME */
+
+{en:"MORNING",ru:"утро",say:"морнинг",cat:"Time"},
+{en:"AFTERNOON",ru:"день",say:"афтэрнун",cat:"Time"},
+{en:"EVENING",ru:"вечер",say:"ивнинг",cat:"Time"},
+{en:"WEEK",ru:"неделя",say:"уик",cat:"Time"},
+{en:"MONTH",ru:"месяц",say:"манс",cat:"Time"},
+{en:"YEAR",ru:"год",say:"йир",cat:"Time"},
+{en:"NOW",ru:"сейчас",say:"нау",cat:"Time"},
+{en:"LATER",ru:"позже",say:"лэйтэр",cat:"Time"},
+{en:"SOON",ru:"скоро",say:"сун",cat:"Time"},
+{en:"ALWAYS",ru:"всегда",say:"олвэйз",cat:"Time"},
+{en:"NEVER",ru:"никогда",say:"нэвэр",cat:"Time"},
+{en:"SOMETIMES",ru:"иногда",say:"самтаймз",cat:"Time"},
+
+/* CITY */
+
+{en:"STREET",ru:"улица",say:"стрит",cat:"City"},
+{en:"ROAD",ru:"дорога",say:"роуд",cat:"City"},
+{en:"SHOP",ru:"магазин",say:"шоп",cat:"City"},
+{en:"BANK",ru:"банк",say:"бэнк",cat:"City"},
+{en:"HOSPITAL",ru:"больница",say:"хоспитэл",cat:"City"},
+{en:"SCHOOL",ru:"школа",say:"скул",cat:"City"},
+{en:"PARK",ru:"парк",say:"парк",cat:"City"},
+{en:"CENTER",ru:"центр",say:"сэнтэр",cat:"City"},
+{en:"LEFT",ru:"лево / левый",say:"лефт",cat:"City"},
+{en:"RIGHT",ru:"право / правый",say:"райт",cat:"City"},
+{en:"STRAIGHT",ru:"прямо",say:"стрэйт",cat:"City"},
+{en:"NEAR",ru:"рядом / близко",say:"нир",cat:"City"},
+{en:"FAR",ru:"далеко",say:"фар",cat:"City"},
+
+/* NUMBERS */
+
+{en:"ONE",ru:"один",say:"уан",cat:"Numbers"},
+{en:"TWO",ru:"два",say:"ту",cat:"Numbers"},
+{en:"THREE",ru:"три",say:"сри",cat:"Numbers"},
+{en:"FOUR",ru:"четыре",say:"фор",cat:"Numbers"},
+{en:"FIVE",ru:"пять",say:"файв",cat:"Numbers"},
+{en:"SIX",ru:"шесть",say:"сикс",cat:"Numbers"},
+{en:"SEVEN",ru:"семь",say:"сэвэн",cat:"Numbers"},
+{en:"EIGHT",ru:"восемь",say:"эйт",cat:"Numbers"},
+{en:"NINE",ru:"девять",say:"найн",cat:"Numbers"},
+{en:"TEN",ru:"десять",say:"тэн",cat:"Numbers"},
+
+/* PHRASES */
+
+{en:"HOW ARE YOU?",ru:"как ты?",say:"хау ар ю",cat:"Phrases"},
+{en:"I AM FINE",ru:"у меня всё хорошо",say:"ай эм файн",cat:"Phrases"},
+{en:"WHAT IS YOUR NAME?",ru:"как тебя зовут?",say:"уот из йор нейм",cat:"Phrases"},
+{en:"MY NAME IS...",ru:"меня зовут...",say:"май нейм из",cat:"Phrases"},
+{en:"NICE TO MEET YOU",ru:"приятно познакомиться",say:"найс ту мит ю",cat:"Phrases"},
+{en:"WHERE ARE YOU FROM?",ru:"откуда ты?",say:"уэр ар ю фром",cat:"Phrases"},
+{en:"I AM FROM...",ru:"я из...",say:"ай эм фром",cat:"Phrases"},
+{en:"I DON'T KNOW",ru:"я не знаю",say:"ай доунт ноу",cat:"Phrases"},
+{en:"I DON'T UNDERSTAND",ru:"я не понимаю",say:"ай доунт андэрстэнд",cat:"Phrases"},
+{en:"CAN YOU HELP ME?",ru:"ты можешь мне помочь?",say:"кэн ю хелп ми",cat:"Phrases"},
+{en:"HOW MUCH IS IT?",ru:"сколько это стоит?",say:"хау мач из ит",cat:"Phrases"},
+{en:"I WOULD LIKE...",ru:"я бы хотел...",say:"ай вуд лайк",cat:"Phrases"},
+{en:"SEE YOU LATER",ru:"увидимся позже",say:"си ю лэйтэр",cat:"Phrases"},
+{en:"HAVE A NICE DAY",ru:"хорошего дня",say:"хэв э найс дэй",cat:"Phrases"}
+
+];
+
+
+/* =========================================================
+   LESSONS
+========================================================= */
+
+const LESSONS = [
+
+{
+id:1,
+icon:"👋",
+title:"Hello! Первые слова",
+desc:"Hello, hi, goodbye, yes, no",
+words:["HELLO","HI","GOODBYE","BYE","YES","NO"],
+xp:60
+},
+
+{
+id:2,
+icon:"🙋",
+title:"Знакомство",
+desc:"Имя, я, ты, мой, твой",
+words:["I","YOU","MY","YOUR","NAME","FRIEND"],
+xp:70
+},
+
+{
+id:3,
+icon:"🏠",
+title:"Дом и семья",
+desc:"Дом, семья, комнаты",
+words:["HOME","HOUSE","ROOM","FAMILY","MOTHER","FATHER","BROTHER","SISTER"],
+xp:80
+},
+
+{
+id:4,
+icon:"🌅",
+title:"Мой день",
+desc:"Просыпаться, вставать, душ",
+words:["WAKE UP","GET UP","LIE","SHOWER","MORNING","TODAY","NOW"],
+xp:90
+},
+
+{
+id:5,
+icon:"🍎",
+title:"Еда и напитки",
+desc:"Основные продукты",
+words:["WATER","FOOD","BREAD","MILK","CHEESE","MEAT","CHICKEN","FISH","APPLE","COFFEE","TEA"],
+xp:100
+},
+
+{
+id:6,
+icon:"💬",
+title:"Первый разговор",
+desc:"Простые фразы",
+words:["HOW ARE YOU?","I AM FINE","WHAT IS YOUR NAME?","MY NAME IS...","NICE TO MEET YOU"],
+xp:110
+},
+
+{
+id:7,
+icon:"🏙️",
+title:"Город",
+desc:"Улицы и места",
+words:["CITY","STREET","ROAD","SHOP","BANK","HOSPITAL","SCHOOL","PARK","CENTER"],
+xp:120
+},
+
+{
+id:8,
+icon:"🧭",
+title:"Как пройти?",
+desc:"Направления и расстояние",
+words:["LEFT","RIGHT","STRAIGHT","NEAR","FAR","LANDMARK","LANDMARKS"],
+xp:130
+},
+
+{
+id:9,
+icon:"🛒",
+title:"Магазин",
+desc:"Покупки и товары",
+words:["BUY","SELL","PAY","ITEM","HOW MUCH IS IT?","DAIRY"],
+xp:140
+},
+
+{
+id:10,
+icon:"☕",
+title:"Кафе",
+desc:"Заказ еды и напитков",
+words:["BREAKFAST","LUNCH","DINNER","COFFEE","TEA","I WOULD LIKE...","PLEASE"],
+xp:150
+},
+
+{
+id:11,
+icon:"✈️",
+title:"Аэропорт",
+desc:"Путешествие",
+words:["AIRPORT","TICKET","FLIGHT","PASSPORT","LUGGAGE","GET TO THE AIRPORT"],
+xp:160
+},
+
+{
+id:12,
+icon:"🏨",
+title:"Отель",
+desc:"Бронирование и аренда",
+words:["HOTEL","TO BOOK","TO RENT","APPLICATION"],
+xp:170
+},
+
+{
+id:13,
+icon:"📞",
+title:"Телефон",
+desc:"Разговоры по телефону",
+words:["PHONE","CALL","TALK ON THE PHONE","SPEAKING","SHOULD","COULD"],
+xp:180
+},
+
+{
+id:14,
+icon:"🧠",
+title:"Я думаю...",
+desc:"Мнение и предположение",
+words:["IT SEEMS TO ME","THINK","GUESS","OBVIOUS","EVERYONE","THE SAME"],
+xp:190
+},
+
+{
+id:15,
+icon:"⚙️",
+title:"Проблемы и решения",
+desc:"Решать, зависеть, необходимо",
+words:["TO SOLVE","TO DEPEND","NECESSARY","TO REFUSE","IMMEDIATELY"],
+xp:200
+},
+
+{
+id:16,
+icon:"💼",
+title:"Работа",
+desc:"Работа и успех",
+words:["WORK","WORKER","SUCCESSFUL","TO PASS","URGENT","URGENTLY","PLEASURE"],
+xp:210
+},
+
+{
+id:17,
+icon:"📚",
+title:"Учёба",
+desc:"Reading, Listening, Teach",
+words:["READING","LISTENING","TEACH","STUDY","LEARN","READ","WRITE"],
+xp:220
+},
+
+{
+id:18,
+icon:"🌍",
+title:"Продвинутые слова",
+desc:"Свобода, независимость, гостеприимство",
+words:["FREEDOM","INDEPENDENCE","HOSPITABLE","FLUENTLY","NOWADAYS","EXCITING"],
+xp:250
+},
+
+{
+id:19,
+icon:"🌧️",
+title:"Погода",
+desc:"Дождь, снег, облака",
+words:["RAIN","SNOW","WIND","CLOUD","STORM","SUNNY","RAINY","SHOWER"],
+xp:180
+},
+
+{
+id:20,
+icon:"🇬🇧",
+title:"Большой разговор",
+desc:"Первые реальные предложения",
+words:[
+"IT SEEMS TO ME",
+"SHOULD",
+"COULD",
+"TO DEPEND",
+"SUCCESSFUL",
+"FLUENTLY",
+"AT THE SAME TIME",
+"THIS KIND OF"
+],
+xp:300
+}
+
+];
+
+
+/* =========================================================
+   ACHIEVEMENTS
+========================================================= */
+
+const ACHIEVEMENTS = [
+
+{id:"first",icon:"🌱",title:"Первый шаг",desc:"Ответь на первый вопрос",check:s=>s.answers>=1},
+
+{id:"ten",icon:"🔟",title:"Десятка",desc:"Ответь на 10 вопросов",check:s=>s.answers>=10},
+
+{id:"fifty",icon:"💯",title:"Первые 50",desc:"Ответь на 50 вопросов",check:s=>s.answers>=50},
+
+{id:"words10",icon:"📖",title:"Словарик",desc:"Выучи 10 слов",check:s=>s.learned.length>=10},
+
+{id:"words50",icon:"📚",title:"Большой словарь",desc:"Выучи 50 слов",check:s=>s.learned.length>=50},
+
+{id:"lesson1",icon:"🎓",title:"Первый урок",desc:"Заверши урок",check:s=>s.lessons>=1},
+
+{id:"lesson10",icon:"🏫",title:"Ученик",desc:"Заверши 10 уроков",check:s=>s.lessons>=10},
+
+{id:"xp500",icon:"⭐",title:"Опытный",desc:"Получи 500 XP",check:s=>s.xp>=500},
+
+{id:"xp2000",icon:"🌟",title:"Продвинутый",desc:"Получи 2000 XP",check:s=>s.xp>=2000},
+
+{id:"streak3",icon:"🔥",title:"Три дня",desc:"Серия 3 дня",check:s=>s.streak>=3},
+
+{id:"streak7",icon:"🔥",title:"Неделя",desc:"Серия 7 дней",check:s=>s.streak>=7},
+
+{id:"correct25",icon:"🎯",title:"Меткость",desc:"25 правильных ответов",check:s=>s.correct>=25},
+
+{id:"correct100",icon:"🏹",title:"Снайпер",desc:"100 правильных ответов",check:s=>s.correct>=100}
+
+];
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let state = {
+
+xp:0,
+coins:100,
+lives:3,
+streak:0,
+
+learned:[],
+answers:0,
+correct:0,
+
+bestStreak:0,
+currentStreak:0,
+
+lessons:0,
+
+quests:{
+lesson:0,
+answers:0,
+words:0
+},
+
+lastDay:"",
+unlockedAchievements:[],
+
+sound:true,
+music:true,
+
+lessonId:1,
+lessonIndex:0,
+lessonWords:[],
+
+practiceType:"",
+practiceIndex:0,
+practiceWords:[],
+
+dialogStep:0
+
+};
+
+
+function loadGame(){
+
+    try{
+
+        const saved=localStorage.getItem("ENGLISH_SIMULATOR_REMAKE_1");
+
+        if(saved){
+
+            const data=JSON.parse(saved);
+
+            state={...state,...data};
+
+            state.quests={
+                lesson:0,
+                answers:0,
+                words:0,
+                ...(data.quests||{})
+            };
+
+        }
+
+    }catch(e){
+
+        console.log("Save load error",e);
+
+    }
+
+}
+
+
+function saveGame(){
+
+    localStorage.setItem(
+        "ENGLISH_SIMULATOR_REMAKE_1",
+        JSON.stringify(state)
+    );
+
+}
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function $(id){
+    return document.getElementById(id);
+}
+
+
+function toast(text){
+
+    const el=$("toast");
+
+    el.textContent=text;
+
+    el.classList.add("show");
+
+    clearTimeout(window.toastTimer);
+
+    window.toastTimer=setTimeout(
+        ()=>el.classList.remove("show"),
+        2500
+    );
+
+}
+
+
+function levelInfo(){
+
+    if(state.xp<100)
+        return {name:"A0",next:100,base:0};
+
+    if(state.xp<500)
+        return {name:"A1",next:500,base:100};
+
+    if(state.xp<1200)
+        return {name:"A2",next:1200,base:500};
+
+    if(state.xp<2500)
+        return {name:"B1",next:2500,base:1200};
+
+    if(state.xp<5000)
+        return {name:"B2",next:5000,base:2500};
+
+    return {name:"C1",next:Infinity,base:5000};
+
+}
+
+
+function addXP(amount){
+
+    const old=levelInfo().name;
+
+    state.xp+=amount;
+
+    const now=levelInfo().name;
+
+    if(old!==now){
+
+        toast("🎉 Новый уровень: "+now);
+
+    }
+
+    saveGame();
+    updateUI();
+
+}
+
+
+function addCoins(amount){
+
+    state.coins=Math.max(0,state.coins+amount);
+
+    saveGame();
+    updateUI();
+
+}
+
+
+function learnWord(word){
+
+    if(!state.learned.includes(word)){
+
+        state.learned.push(word);
+
+        state.quests.words++;
+
+        addCoins(2);
+
+        toast("📖 Новое слово: "+word);
+
+    }
+
+}
+
+
+function getWord(en){
+
+    return WORDS.find(w=>w.en===en) || WORDS[0];
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+const pageNames={
+
+home:"Главная",
+map:"Карта",
+lessons:"Уроки",
+practice:"Практика",
+dialogues:"Диалоги",
+vocab:"Словарь",
+quests:"Задания",
+achievements:"Достижения",
+stats:"Статистика",
+settings:"Настройки",
+lessonGame:"Урок",
+exam:"Экзамен A1"
+
+};
+
+
+function showPage(name,button){
+
+    document.querySelectorAll(".page")
+        .forEach(p=>p.classList.remove("active"));
+
+    const page=$("page-"+name);
+
+    if(!page)return;
+
+    page.classList.add("active");
+
+    $("pageTitle").textContent=pageNames[name]||"English Simulator";
+
+    document.querySelectorAll(".nav button,.mobileNav button")
+        .forEach(b=>b.classList.remove("active"));
+
+    if(button){
+        button.classList.add("active");
+    }
+
+    if(name==="lessons")renderLessons();
+    if(name==="vocab")renderVocab();
+    if(name==="quests")renderQuests();
+    if(name==="achievements")renderAchievements();
+    if(name==="stats")renderStats();
+    if(name==="dialogues")renderDialogue();
+
+    window.scrollTo(0,0);
+
+}
+
+
+/* =========================================================
+   UI
+========================================================= */
+
+function updateUI(){
+
+    const li=levelInfo();
+
+    $("topXP").textContent=state.xp;
+    $("topCoins").textContent=state.coins;
+    $("topLives").textContent=state.lives;
+    $("topStreak").textContent=state.streak;
+
+    $("homeLevel").textContent=li.name;
+    $("homeWords").textContent=state.learned.length;
+    $("homeStreak").textContent=state.streak;
+    $("homeCorrect").textContent=state.correct;
+
+    let progress=0;
+
+    if(li.next!==Infinity){
+
+        progress=
+            ((state.xp-li.base)/
+            (li.next-li.base))*100;
+
+    }else{
+
+        progress=100;
+
+    }
+
+    $("levelProgress").style.width=
+        Math.max(0,Math.min(100,progress))+"%";
+
+    $("levelText").textContent=
+        li.next===Infinity
+        ? "Максимальный уровень"
+        : `${state.xp-li.base} / ${li.next-li.base} XP`;
+
+    $("nextLessonText").textContent=
+        "Урок "+Math.min(state.lessons+1,LESSONS.length)+": "+
+        (LESSONS[Math.min(state.lessons,LESSONS.length-1)]?.title || "Повторение");
+
+    if($("musicButton"))
+        $("musicButton").textContent=
+            state.music?"🎵 Музыка: ВКЛ":"🔇 Музыка: ВЫКЛ";
+
+    if($("musicSwitch"))
+        $("musicSwitch").classList.toggle("on",state.music);
+
+    if($("soundSwitch"))
+        $("soundSwitch").classList.toggle("on",state.sound);
+
+}
+
+
+/* =========================================================
+   LESSON LIST
+========================================================= */
+
+function renderLessons(){
+
+    const box=$("lessonsList");
+
+    box.innerHTML="";
+
+    LESSONS.forEach((lesson,index)=>{
+
+        const unlocked=
+            index<=state.lessons;
+
+        const completed=
+            index<state.lessons;
+
+        const div=document.createElement("div");
+
+        div.className="lesson";
+
+        div.innerHTML=`
+
+            <div class="lessonIcon">
+                ${lesson.icon}
+            </div>
+
+            <div class="lessonInfo">
+
+                <h3>${lesson.id}. ${lesson.title}</h3>
+
+                <p>${lesson.desc}</p>
+
+                <p style="margin-top:7px">
+                    ${lesson.words.length} слов · +${lesson.xp} XP
+                </p>
+
+            </div>
+
+            <div>
+
+                ${
+                    completed
+                    ? `<div class="lessonStatus">✓ Пройден</div>`
+                    : unlocked
+                    ? `<button class="btn" onclick="startLesson(${lesson.id})">Начать</button>`
+                    : `<div class="muted">🔒</div>`
+                }
+
+            </div>
+
+        `;
+
+        box.appendChild(div);
+
+    });
+
+}
+
+
+/* =========================================================
+   START LESSON
+========================================================= */
+
+function startNextLesson(){
+
+    const index=Math.min(state.lessons,LESSONS.length-1);
+
+    startLesson(LESSONS[index].id);
+
+}
+
+
+function startLesson(id){
+
+    const lesson=LESSONS.find(l=>l.id===id);
+
+    if(!lesson)return;
+
+    if(id>state.lessons+1){
+
+        toast("🔒 Сначала пройди предыдущий урок");
+
+        return;
+
+    }
+
+    state.lessonId=id;
+    state.lessonIndex=0;
+
+    state.lessonWords=
+        [...lesson.words]
+        .sort(()=>Math.random()-.5);
+
+    saveGame();
+
+    showPage("lessonGame");
+
+    renderLessonQuestion();
+
+}
+
+
+/* =========================================================
+   LESSON QUESTION
+========================================================= */
+
+function renderLessonQuestion(){
+
+    const lesson=
+        LESSONS.find(l=>l.id===state.lessonId);
+
+    const word=
+        getWord(state.lessonWords[state.lessonIndex]);
+
+    if(!word)return;
+
+    $("lessonGameTitle").textContent=
+        `${lesson.icon} ${lesson.title}`;
+
+    $("lessonCounter").textContent=
+        `${state.lessonIndex+1} / ${state.lessonWords.length}`;
+
+    $("lessonProgress").style.width=
+        ((state.lessonIndex/state.lessonWords.length)*100)+"%";
+
+    $("questionWord").textContent=word.en;
+
+    $("questionPron").textContent="/ "+word.say+" /";
+
+    $("lessonFeedback").className="feedback";
+
+    $("lessonFeedback").textContent="";
+
+    const answerBox=$("lessonAnswers");
+
+    answerBox.innerHTML="";
+
+    const answers=[
+        word,
+        ...randomWords(3,word)
+    ].sort(()=>Math.random()-.5);
+
+    answers.forEach(option=>{
+
+        const btn=document.createElement("button");
+
+        btn.className="answer";
+
+        btn.textContent=option.ru;
+
+        btn.onclick=()=>answerLesson(option.en,btn);
+
+        answerBox.appendChild(btn);
+
+    });
+
+}
+
+
+function randomWords(count,exclude){
+
+    return [...WORDS]
+        .filter(w=>w.en!==exclude.en)
+        .sort(()=>Math.random()-.5)
+        .slice(0,count);
+
+}
+
+
+/* =========================================================
+   ANSWER LESSON
+========================================================= */
+
+function answerLesson(answer,button){
+
+    const current=
+        getWord(state.lessonWords[state.lessonIndex]);
+
+    const buttons=
+        document.querySelectorAll("#lessonAnswers .answer");
+
+    buttons.forEach(b=>b.disabled=true);
+
+    state.answers++;
+    state.quests.answers++;
+
+    if(answer===current.en){
+
+        button.classList.add("correct");
+
+        state.correct++;
+        state.currentStreak++;
+
+        state.bestStreak=
+            Math.max(
+                state.bestStreak,
+                state.currentStreak
+            );
+
+        addXP(10);
+        addCoins(5);
+
+        learnWord(current.en);
+
+        feedback(
+            true,
+            "✓ Правильно! "+
+            current.en+" — "+current.ru
+        );
+
+    }else{
+
+        button.classList.add("wrong");
+
+        state.currentStreak=0;
+
+        state.lives=Math.max(0,state.lives-1);
+
+        feedback(
+            false,
+            "✕ Правильный ответ: "+
+            current.en+" — "+current.ru
+        );
+
+        if(state.lives<=0){
+
+            state.lives=3;
+
+            toast("❤️ Жизни восстановлены для продолжения");
+
+        }
+
+    }
+
+    checkAchievements();
+
+    saveGame();
+    updateUI();
+
+    setTimeout(()=>{
+
+        state.lessonIndex++;
+
+        if(state.lessonIndex>=state.lessonWords.length){
+
+            finishLesson();
+
+        }else{
+
+            renderLessonQuestion();
+
+        }
+
+    },900);
+
+}
+
+
+function feedback(good,text){
+
+    const el=$("lessonFeedback");
+
+    el.className=
+        "feedback show "+(good?"good":"bad");
+
+    el.textContent=text;
+
+}
+
+
+function finishLesson(){
+
+    const lesson=
+        LESSONS.find(l=>l.id===state.lessonId);
+
+    addXP(lesson.xp);
+
+    addCoins(lesson.words.length*2);
+
+    state.lessons=
+        Math.max(state.lessons,state.lessonId);
+
+    state.quests.lesson++;
+
+    saveGame();
+
+    toast("🎓 Урок завершён! +"+lesson.xp+" XP");
+
+    setTimeout(()=>{
+
+        showPage("lessons");
+
+    },600);
+
+}
+
+
+/* =========================================================
+   SPEECH
+========================================================= */
+
+let currentSpeech="";
+
+
+function speak(text){
+
+    if(!state.sound)return;
+
+    if(!("speechSynthesis" in window)){
+
+        toast("Озвучка не поддерживается");
+
+        return;
+
+    }
+
+    speechSynthesis.cancel();
+
+    const u=new SpeechSynthesisUtterance(text);
+
+    u.lang="en-US";
+    u.rate=.82;
+    u.pitch=1;
+
+    speechSynthesis.speak(u);
+
+}
+
+
+function speakCurrent(){
+
+    const word=
+        getWord(state.lessonWords[state.lessonIndex]);
+
+    speak(word.en);
+
+}
+
+
+function toggleSound(){
+
+    state.sound=!state.sound;
+
+    saveGame();
+    updateUI();
+
+}
+
+
+/* =========================================================
+   MUSIC — WEB AUDIO
+========================================================= */
+
+let audioCtx=null;
+let musicTimer=null;
+let musicGain=null;
+
+function startMusic(){
+
+    if(!state.music)return;
+
+    if(audioCtx)return;
+
+    try{
+
+        audioCtx=
+            new (window.AudioContext||
+            window.webkitAudioContext)();
+
+        musicGain=
+            audioCtx.createGain();
+
+        musicGain.gain.value=.035;
+
+        musicGain.connect(audioCtx.destination);
+
+        const notes=[
+            261.63,
+            329.63,
+            392,
+            329.63,
+            293.66,
+            349.23,
+            440,
+            349.23
+        ];
+
+        let i=0;
+
+        musicTimer=setInterval(()=>{
+
+            if(!audioCtx||!state.music)return;
+
+            const osc=
+                audioCtx.createOscillator();
+
+            const gain=
+                audioCtx.createGain();
+
+            osc.type="sine";
+
+            osc.frequency.value=notes[i%notes.length];
+
+            gain.gain.setValueAtTime(.0001,audioCtx.currentTime);
+
+            gain.gain.exponentialRampToValueAtTime(
+                .025,
+                audioCtx.currentTime+.04
+            );
+
+            gain.gain.exponentialRampToValueAtTime(
+                .0001,
+                audioCtx.currentTime+.7
+            );
+
+            osc.connect(gain);
+            gain.connect(musicGain);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime+.75);
+
+            i++;
+
+        },900);
+
+    }catch(e){
+
+        console.log(e);
+
+    }
+
+}
+
+
+function stopMusic(){
+
+    if(musicTimer){
+
+        clearInterval(musicTimer);
+        musicTimer=null;
+
+    }
+
+    if(audioCtx){
+
+        audioCtx.close();
+        audioCtx=null;
+
+    }
+
+}
+
+
+function toggleMusic(){
+
+    state.music=!state.music;
+
+    if(state.music){
+
+        startMusic();
+
+    }else{
+
+        stopMusic();
+
+    }
+
+    saveGame();
+    updateUI();
+
+}
+
+
+/* Start music only after user interaction */
+
+document.addEventListener("click",function(){
+
+    if(state.music && !audioCtx)
+        startMusic();
+
+},{once:true});
+
+
+/* =========================================================
+   PRACTICE
+========================================================= */
+
+function startPractice(type){
+
+    state.practiceType=type;
+
+    state.practiceIndex=0;
+
+    state.practiceWords=
+        [...WORDS]
+        .sort(()=>Math.random()-.5)
+        .slice(0,20);
+
+    renderPracticeQuestion();
+
+}
+
+
+function renderPracticeQuestion(){
+
+    const box=$("practiceGame");
+
+    const word=
+        state.practiceWords[state.practiceIndex];
+
+    if(!word){
+
+        box.innerHTML=`
+
+        <div class="card gameCenter">
+
+            <h2>🎉 Тренировка закончена!</h2>
+
+            <p class="muted">
+                Ты прошёл все вопросы.
+            </p>
+
+            <br>
+
+            <button class="btn"
+                onclick="startPractice('${state.practiceType}')">
+                Ещё раз
+            </button>
+
+        </div>
+
+        `;
+
+        return;
+
+    }
+
+    if(state.practiceType==="choice"){
+
+        const options=[
+            word,
+            ...randomWords(3,word)
+        ].sort(()=>Math.random()-.5);
+
+        box.innerHTML=`
+
+        <div class="card gameCenter">
+
+            <div class="muted" style="text-align:center">
+                ${state.practiceIndex+1} / ${state.practiceWords.length}
+            </div>
+
+            <div class="miniQuestion">
+                ${word.en}
+            </div>
+
+            <div class="choiceGrid">
+
+                ${options.map(o=>`
+
+                    <button class="answer"
+                        onclick="practiceChoice('${escapeJS(o.en)}')">
+                        ${o.ru}
+                    </button>
+
+                `).join("")}
+
+            </div>
+
+        </div>
+
+        `;
+
+    }
+
+    if(state.practiceType==="type"){
+
+        box.innerHTML=`
+
+        <div class="card gameCenter">
+
+            <div class="muted" style="text-align:center">
+                Переведи слово на английский
+            </div>
+
+            <div class="miniQuestion">
+                ${word.ru}
+            </div>
+
+            <input
+                class="typeInput"
+                id="typeAnswer"
+                autocomplete="off"
+                placeholder="Напиши английское слово..."
+            >
+
+            <br><br>
+
+            <button class="btn"
+                onclick="practiceTypeAnswer()">
+                Проверить
+            </button>
+
+            <div id="typeFeedback"></div>
+
+        </div>
+
+        `;
+
+        setTimeout(()=>{
+
+            $("typeAnswer")?.focus();
+
+            $("typeAnswer")?.addEventListener(
+                "keydown",
+                e=>{
+                    if(e.key==="Enter")
+                        practiceTypeAnswer();
+                }
+            );
+
+        },50);
+
+    }
+
+    if(state.practiceType==="speed"){
+
+        if(!window.speedStarted){
+
+            window.speedStarted=true;
+            window.speedScore=0;
+            window.speedTime=30;
+
+            speedTick();
+
+        }
+
+        box.innerHTML=`
+
+        <div class="card gameCenter">
+
+            <div class="timer">
+                ⏱️ ${window.speedTime}
+            </div>
+
+            <div class="miniQuestion">
+                ${word.en}
+            </div>
+
+            <div class="choiceGrid">
+
+                ${[
+                    word,
+                    ...randomWords(3,word)
+                ].sort(()=>Math.random()-.5).map(o=>`
+
+                    <button class="answer"
+                    onclick="speedAnswer('${escapeJS(o.en)}')">
+                        ${o.ru}
+                    </button>
+
+                `).join("")}
+
+            </div>
+
+            <br>
+
+            <div style="text-align:center">
+                Очки: <strong>${window.speedScore}</strong>
+            </div>
+
+        </div>
+
+        `;
+
+    }
+
+}
+
+
+function escapeJS(str){
+
+    return String(str)
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'");
+
+}
+
+
+function practiceChoice(answer){
+
+    const word=
+        state.practiceWords[state.practiceIndex];
+
+    state.answers++;
+
+    if(answer===word.en){
+
+        state.correct++;
+        state.currentStreak++;
+
+        addXP(5);
+        addCoins(2);
+
+        learnWord(word.en);
+
+        toast("✓ Правильно!");
+
+    }else{
+
+        state.currentStreak=0;
+
+        toast("✕ "+word.en+" — "+word.ru);
+
+    }
+
+    state.practiceIndex++;
+
+    saveGame();
+    updateUI();
+
+    renderPracticeQuestion();
+
+}
+
+
+function practiceTypeAnswer(){
+
+    const word=
+        state.practiceWords[state.practiceIndex];
+
+    const input=$("typeAnswer");
+
+    if(!input)return;
+
+    const answer=
+        input.value.trim().toUpperCase();
+
+    state.answers++;
+
+    const feedback=$("typeFeedback");
+
+    if(answer===word.en){
+
+        state.correct++;
+
+        feedback.innerHTML=
+            `<div class="feedback show good">
+                ✓ Правильно! ${word.en}
+            </div>`;
+
+        addXP(8);
+        addCoins(3);
+
+        learnWord(word.en);
+
+    }else{
+
+        feedback.innerHTML=
+            `<div class="feedback show bad">
+                ✕ Правильно: ${word.en}
+            </div>`;
+
+    }
+
+    saveGame();
+    updateUI();
+
+    setTimeout(()=>{
+
+        state.practiceIndex++;
+
+        renderPracticeQuestion();
+
+    },800);
+
+}
+
+
+function speedTick(){
+
+    if(!window.speedStarted)return;
+
+    if(window.speedTime<=0){
+
+        window.speedStarted=false;
+
+        $("practiceGame").innerHTML=`
+
+        <div class="card gameCenter" style="text-align:center">
+
+            <h2>⚡ Время!</h2>
+
+            <div class="bigStat">
+                ${window.speedScore}
+            </div>
+
+            <p class="muted">
+                правильных ответов за 30 секунд
+            </p>
+
+            <br>
+
+            <button class="btn"
+                onclick="startPractice('speed')">
+                Повторить
+            </button>
+
+        </div>
+        `;
+
+        return;
+
+    }
+
+    window.speedTime--;
+
+    renderPracticeQuestion();
+
+    setTimeout(speedTick,1000);
+
+}
+
+
+function speedAnswer(answer){
+
+    const word=
+        state.practiceWords[state.practiceIndex];
+
+    if(answer===word.en){
+
+        window.speedScore++;
+
+        state.correct++;
+
+        addXP(4);
+        addCoins(1);
+
+    }
+
+    state.answers++;
+
+    state.practiceIndex++;
+
+    if(state.practiceIndex>=state.practiceWords.length){
+
+        state.practiceWords=
+            [...WORDS]
+            .sort(()=>Math.random()-.5)
+            .slice(0,20);
+
+        state.practiceIndex=0;
+
+    }
+
+    saveGame();
+    updateUI();
+
+    renderPracticeQuestion();
+
+}
+
+
+/* =========================================================
+   DIALOGUES
+========================================================= */
+
+const DIALOGUES=[
+
+{
+npc:"Hi! What's your name?",
+options:[
+{text:"Hello! My name is Thomas.",correct:true},
+{text:"Book airport please.",correct:false},
+{text:"I am rain.",correct:false}
+]
+},
+
+{
+npc:"Nice to meet you! Where are you from?",
+options:[
+{text:"I am from Germany.",correct:true},
+{text:"I am a shower.",correct:false},
+{text:"I book a ticket yesterday.",correct:false}
+]
+},
+
+{
+npc:"Do you speak English?",
+options:[
+{text:"I speak a little English.",correct:true},
+{text:"I am a hotel.",correct:false},
+{text:"The same airport.",correct:false}
+]
+},
+
+{
+npc:"What do you want to do today?",
+options:[
+{text:"I want to study English.",correct:true},
+{text:"I am a landmark.",correct:false},
+{text:"I refuse the weather.",correct:false}
+]
+},
+
+{
+npc:"Good luck with your English!",
+options:[
+{text:"Thank you! It is a pleasure.",correct:true},
+{text:"Rain at everyone.",correct:false},
+{text:"Get up airport.",correct:false}
+]
+}
+
+];
+
+
+function renderDialogue(){
+
+    const chat=$("dialogueChat");
+
+    const opts=$("dialogOptions");
+
+    chat.innerHTML="";
+
+    opts.innerHTML="";
+
+    for(let i=0;i<state.dialogStep;i++){
+
+        const d=DIALOGUES[i];
+
+        if(!d)continue;
+
+        const player=
+            d.options.find(o=>o.correct);
+
+        chat.innerHTML+=`
+
+            <div class="bubble npc">
+                👤 ${d.npc}
+            </div>
+
+            <div class="bubble player">
+                🧑 ${player.text}
+            </div>
+
+        `;
+
+    }
+
+    if(state.dialogStep>=DIALOGUES.length){
+
+        chat.innerHTML+=`
+
+            <div class="bubble npc">
+                🎉 Great! You finished the dialogue!
+            </div>
+
+        `;
+
+        opts.innerHTML=`
+
+            <div class="card" style="text-align:center">
+
+                <h2>🎉 Диалог завершён!</h2>
+
+                <p class="muted">
+                    Ты провёл свой первый разговор на английском.
+                </p>
+
+                <br>
+
+                <button class="btn"
+                    onclick="state.dialogStep=0;renderDialogue()">
+                    Начать заново
+                </button>
+
+            </div>
+
+        `;
+
+        addXP(100);
+
+        return;
+
+    }
+
+    const d=DIALOGUES[state.dialogStep];
+
+    chat.innerHTML+=`
+
+        <div class="bubble npc">
+            👤 ${d.npc}
+        </div>
+
+    `;
+
+    d.options
+        .sort(()=>Math.random()-.5)
+        .forEach(option=>{
+
+            const b=document.createElement("button");
+
+            b.className="answer";
+
+            b.textContent=option.text;
+
+            b.onclick=()=>dialogAnswer(option.correct);
+
+            opts.appendChild(b);
+
+        });
+
+}
+
+
+function dialogAnswer(correct){
+
+    if(correct){
+
+        addXP(20);
+        addCoins(5);
+
+        state.correct++;
+
+        toast("✓ Отлично!");
+
+        state.dialogStep++;
+
+    }else{
+
+        toast("✕ Попробуй другой ответ");
+
+    }
+
+    state.answers++;
+
+    saveGame();
+
+    renderDialogue();
+
+}
+
+
+/* =========================================================
+   VOCABULARY
+========================================================= */
+
+function renderVocab(){
+
+    const box=$("vocabList");
+
+    if(!box)return;
+
+    const search=
+        ($("vocabSearch")?.value||"")
+        .trim()
+        .toLowerCase();
+
+    const list=
+        WORDS.filter(w=>
+            !search ||
+            w.en.toLowerCase().includes(search) ||
+            w.ru.toLowerCase().includes(search) ||
+            w.cat.toLowerCase().includes(search)
+        );
+
+    box.innerHTML="";
+
+    list.forEach(word=>{
+
+        const learned=
+            state.learned.includes(word.en);
+
+        box.innerHTML+=`
+
+            <div class="wordRow">
+
+                <div>
+
+                    <div class="wordEn">
+                        ${word.en}
+                        ${learned?" ✓":""}
+                    </div>
+
+                    <div class="wordRu">
+                        ${word.ru}
+                    </div>
+
+                </div>
+
+                <div style="text-align:right">
+
+                    <div class="small muted">
+                        ${word.cat}
+                    </div>
+
+                    <button
+                        class="speakBtn"
+                        onclick="speak('${escapeJS(word.en)}')">
+                        🔊
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+    });
+
+}
+
+
+/* =========================================================
+   QUESTS
+========================================================= */
+
+function renderQuests(){
+
+    const box=$("questsList");
+
+    const quests=[
+
+    {
+        title:"📚 Учёба дня",
+        desc:"Заверши 1 урок",
+        progress:Math.min(state.quests.lesson,1),
+        max:1,
+        reward:50
+    },
+
+    {
+        title:"🧠 Практика",
+        desc:"Ответь на 10 вопросов",
+        progress:Math.min(state.quests.answers,10),
+        max:10,
+        reward:30
+    },
+
+    {
+        title:"📖 Новые слова",
+        desc:"Выучи 5 новых слов",
+        progress:Math.min(state.quests.words,5),
+        max:5,
+        reward:40
+    },
+
+    {
+        title:"🎯 25 ответов",
+        desc:"Дай 25 ответов",
+        progress:Math.min(state.answers,25),
+        max:25,
+        reward:75
+    },
+
+    {
+        title:"⭐ 500 XP",
+        desc:"Получи 500 XP",
+        progress:Math.min(state.xp,500),
+        max:500,
+        reward:100
+    },
+
+    {
+        title:"🔥 Серия",
+        desc:"Продержись 3 дня",
+        progress:Math.min(state.streak,3),
+        max:3,
+        reward:100
+    }
+
+    ];
+
+    box.innerHTML="";
+
+    quests.forEach(q=>{
+
+        const done=q.progress>=q.max;
+
+        box.innerHTML+=`
+
+            <div class="quest">
+
+                <div class="questTop">
+
+                    <div>
+
+                        <h3>${q.title}</h3>
+
+                        <p class="muted small">
+                            ${q.desc}
+                        </p>
+
+                    </div>
+
+                    <div class="questReward">
+                        🪙 +${q.reward}
+                    </div>
+
+                </div>
+
+                <br>
+
+                <div class="progress">
+
+                    <div style="width:${(q.progress/q.max)*100}%"></div>
+
+                </div>
+
+                <br>
+
+                <div class="small">
+
+                    ${q.progress} / ${q.max}
+
+                    ${done?" ✓ Выполнено":""}
+
+                </div>
+
+            </div>
+
+        `;
+
+    });
+
+}
+
+
+/* =========================================================
+   ACHIEVEMENTS
+========================================================= */
+
+function renderAchievements(){
+
+    const box=$("achievementsList");
+
+    box.innerHTML="";
+
+    ACHIEVEMENTS.forEach(a=>{
+
+        const unlocked=
+            state.unlockedAchievements.includes(a.id) ||
+            a.check(state);
+
+        box.innerHTML+=`
+
+            <div class="achievement ${unlocked?"":"locked"}">
+
+                <div class="achievementIcon">
+                    ${a.icon}
+                </div>
+
+                <h3>${a.title}</h3>
+
+                <p class="muted small">
+                    ${a.desc}
+                </p>
+
+                <br>
+
+                <span class="small">
+                    ${unlocked?"✓ Получено":"🔒 Не получено"}
+                </span>
+
+            </div>
+
+        `;
+
+    });
+
+}
+
+
+function checkAchievements(){
+
+    ACHIEVEMENTS.forEach(a=>{
+
+        if(
+            a.check(state) &&
+            !state.unlockedAchievements.includes(a.id)
+        ){
+
+            state.unlockedAchievements.push(a.id);
+
+            addCoins(25);
+
+            toast(
+                "🏆 Достижение: "+a.title
+            );
+
+        }
+
+    });
+
+    saveGame();
+
+}
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+function renderStats(){
+
+    $("statXP").textContent=state.xp;
+    $("statCoins").textContent=state.coins;
+    $("statLessons").textContent=state.lessons;
+    $("statAnswers").textContent=state.answers;
+    $("statCorrect").textContent=state.correct;
+    $("statBest").textContent=state.bestStreak;
+
+    const accuracy=
+        state.answers
+        ? Math.round(
+            state.correct/state.answers*100
+        )
+        : 0;
+
+    $("accuracyBar").style.width=
+        accuracy+"%";
+
+    $("accuracyText").textContent=
+        accuracy+"%";
+
+}
+
+
+/* =========================================================
+   LOCATION ACTIONS
+========================================================= */
+
+function locationAction(place){
+
+    const actions={
+
+        home:{
+            title:"🏠 Дом",
+            text:"Здесь изучаем повседневный английский.",
+            lesson:4
+        },
+
+        shop:{
+            title:"🛒 Магазин",
+            text:"Покупки, товары и деньги.",
+            lesson:9
+        },
+
+        cafe:{
+            title:"☕ Кафе",
+            text:"Заказываем еду и напитки.",
+            lesson:10
+        },
+
+        city:{
+            title:"🌆 Город",
+            text:"Ориентирование по городу.",
+            lesson:7
+        },
+
+        work:{
+            title:"💼 Работа",
+            text:"Рабочие ситуации.",
+            lesson:16
+        },
+
+        airport:{
+            title:"✈️ Аэропорт",
+            text:"Путешествия и аэропорт.",
+            lesson:11
+        },
+
+        hotel:{
+            title:"🏨 Отель",
+            text:"Бронирование и аренда.",
+            lesson:12
+        },
+
+        london:{
+            title:"🇬🇧 London",
+            text:"Продвинутый английский.",
+            lesson:18
+        }
+
+    };
+
+    const a=actions[place];
+
+    if(!a)return;
+
+    if(state.lessons+1<a.lesson){
+
+        toast("🔒 Сначала пройди уроки до "+a.lesson);
+
+        return;
+
+    }
+
+    const answer=
+        confirm(
+            a.title+
+            "\n\n"+
+            a.text+
+            "\n\nОткрыть связанный урок?"
+        );
+
+    if(answer){
+
+        startLesson(a.lesson);
+
+    }
+
+}
+
+
+/* =========================================================
+   DAILY STREAK
+========================================================= */
+
+function checkDaily(){
+
+    const today=
+        new Date().toISOString().slice(0,10);
+
+    if(!state.lastDay){
+
+        state.lastDay=today;
+        state.streak=1;
+
+    }else if(state.lastDay!==today){
+
+        const old=
+            new Date(state.lastDay);
+
+        const now=
+            new Date(today);
+
+        const diff=
+            Math.round(
+                (now-old)/86400000
+            );
+
+        if(diff===1){
+
+            state.streak++;
+
+        }else{
+
+            state.streak=1;
+
+        }
+
+        state.lastDay=today;
+
+        if(state.streak>state.bestStreak)
+            state.bestStreak=state.streak;
+
+    }
+
+    saveGame();
+
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetGame(){
+
+    const ok=
+        confirm(
+            "Точно удалить весь прогресс?\n\n"+
+            "XP, монеты, уроки, слова и достижения будут удалены."
+        );
+
+    if(!ok)return;
+
+    localStorage.removeItem(
+        "ENGLISH_SIMULATOR_REMAKE_1"
+    );
+
+    location.reload();
+
+}
+
+
+/* =========================================================
+   A1 EXAM
+========================================================= */
+
+const EXAM=[
+
+{
+q:"What does HELLO mean?",
+a:["Привет","Пока","Спасибо","Извини"],
+c:0
+},
+
+{
+q:"Choose: «Я люблю кофе»",
+a:["I love coffee","I coffee love","Coffee I am","I am coffee"],
+c:0
+},
+
+{
+q:"What does WAKE UP mean?",
+a:["вставать","просыпаться","лежать","работать"],
+c:1
+},
+
+{
+q:"What does TO BOOK mean?",
+a:["покупать","бронировать","отказываться","решать"],
+c:1
+},
+
+{
+q:"What does SUCCESSFUL mean?",
+a:["успешный","срочный","очевидный","гостеприимный"],
+c:0
+},
+
+{
+q:"What does FREEDOM mean?",
+a:["независимость","свобода","удовольствие","работа"],
+c:1
+},
+
+{
+q:"What does RAIN mean?",
+a:["дождь","душ","снег","ветер"],
+c:0
+},
+
+{
+q:"Choose the correct phrase.",
+a:[
+"Get to the airport",
+"Get airport to",
+"Airport get the",
+"The airport get"
+],
+c:0
+},
+
+{
+q:"What does SHOULD mean?",
+a:["мог бы","следует / стоит","угадывать","зависеть"],
+c:1
+},
+
+{
+q:"What does FLUENTLY mean?",
+a:["медленно","срочно","свободно / бегло","очевидно"],
+c:2
+}
+
+];
+
+
+let examIndex=0;
+let examScore=0;
+
+
+function startExam(){
+
+    examIndex=0;
+    examScore=0;
+
+    showPage("exam");
+
+    renderExam();
+
+}
+
+
+function renderExam(){
+
+    const box=$("examGame");
+
+    if(examIndex>=EXAM.length){
+
+        const percent=
+            Math.round(
+                examScore/EXAM.length*100
+            );
+
+        box.innerHTML=`
+
+            <div style="text-align:center">
+
+                <div class="bigStat">
+                    ${examScore} / ${EXAM.length}
+                </div>
+
+                <h2>
+                    ${percent>=70
+                    ?"🎉 A1 успешно пройден!"
+                    :"📚 Нужно ещё потренироваться"}
+                </h2>
+
+                <p class="muted">
+                    Результат: ${percent}%
+                </p>
+
+                <br>
+
+                <button class="btn"
+                    onclick="startExam()">
+                    Пройти снова
+                </button>
+
+            </div>
+
+        `;
+
+        if(percent>=70){
+
+            addXP(300);
+            addCoins(150);
+
+        }
+
+        return;
+
+    }
+
+    const q=EXAM[examIndex];
+
+    box.innerHTML=`
+
+        <div class="muted">
+            Вопрос ${examIndex+1} / ${EXAM.length}
+        </div>
+
+        <br>
+
+        <div class="miniQuestion">
+            ${q.q}
+        </div>
+
+        ${q.a.map((a,i)=>`
+
+            <button
+                class="examOption"
+                onclick="answerExam(${i})">
+                ${a}
+            </button>
+
+        `).join("")}
+
+    `;
+
+}
+
+
+function answerExam(index){
+
+    const q=EXAM[examIndex];
+
+    if(index===q.c){
+
+        examScore++;
+
+        addXP(15);
+        addCoins(5);
+
+        toast("✓ Правильно");
+
+    }else{
+
+        toast("✕ Неверно");
+
+    }
+
+    state.answers++;
+
+    if(index===q.c)
+        state.correct++;
+
+    examIndex++;
+
+    saveGame();
+    updateUI();
+
+    setTimeout(renderExam,400);
+
+}
+
+
+/* =========================================================
+   KEYBOARD SHORTCUTS
+========================================================= */
+
+document.addEventListener("keydown",e=>{
+
+    if(e.key==="Escape"){
+
+        showPage("home");
+
+    }
+
+});
+
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+
+loadGame();
+
+checkDaily();
+
+updateUI();
+
+renderLessons();
+
+renderVocab();
+
+renderQuests();
+
+renderAchievements();
+
+renderStats();
+
+renderDialogue();
+
+
+/* unlock music on first touch */
+
+["touchstart","mousedown","keydown"].forEach(event=>{
+
+    document.addEventListener(event,()=>{
+
+        if(state.music && !audioCtx)
+            startMusic();
+
+    },{once:true});
+
+});
+
+
+</script>
+
+</body>
+</html>
